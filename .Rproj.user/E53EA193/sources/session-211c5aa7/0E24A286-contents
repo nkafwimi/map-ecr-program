@@ -1,0 +1,69 @@
+########################################
+###    Data Wrangling Session ##########
+###    March 03, 2025         ##########
+###    Author: Neema Kafwimi  ##########
+########################################
+
+# load libraries 
+library(tidyverse)        # for data wrangling 
+library(ggplot2)
+
+
+#load data
+pf_inc <- read_csv("Week_6/Data/pf_incidence.csv")
+pf_inc_nat <- read_csv("Week_6/Data/pf_incidence_national.csv")
+
+pf_agg_age <- filter(pf_inc_nat, age_group == "total")
+
+#EDA
+View(pf_inc_nat)
+
+#Creating visualizations
+ggplot(data=pf_agg_age, aes(x=date_tested, y=incidence))+
+  geom_point()+
+  geom_line()
+
+ggplot(data=pf_agg_age, aes(x=date_tested, y=incidence))+
+  geom_line()
+
+
+
+
+tail(routine_data)
+View(routine_data)
+str(routine_data)          # data structure
+names(routine_data)
+summary(routine_data)
+class(routine_data)
+
+# selecting columns
+df1 <- dplyr::select(routine_data, adm1, month, conf_u5)    
+
+# filtering rows
+filter(routine_data, month == "Jan" & conf_u5 > 200)
+df2 <- filter(routine_data, adm1 == "East" & test_rdt_u5 > 100) # filtering based on adm1 and test_rdt_u5
+df3 <- filter(routine_data, adm1 == "East" | test_rdt_u5 > 100) # filtering based on adm1 or test_rdt_u5
+
+df4 <- routine_data %>% select(adm1, test_u5) %>% filter(test_u5 > 100)
+
+df5 <- routine_data %>% select(adm1, month, conf_u5) %>% filter(conf_u5 > 100 & month == "Apr")
+
+# group by function
+routine_data %>% group_by(month) %>% summarize(mean_conf_u5 = mean(conf_u5), 
+                                               total_conf_u5 = sum(conf_u5)) 
+
+# group by and filter function
+total_confU5_Apr <- routine_data %>% select(adm1, month, conf_u5) %>%
+  filter(month == "Apr") %>%
+  summarize(total_conf_U5 = sum(conf_u5))
+
+df6 <- routine_data %>% select(adm1, month, conf_u5) %>%
+  filter(month == "Apr") %>%
+  group_by(adm1) %>%                                         # returns one value when grouped by month                                
+  summarize(total_conf_U5 = sum(conf_u5))
+
+df7 <- routine_data %>% mutate(prop_conf_u5 = test_u5 / conf_u5)
+drop_na(df7)
+
+
+
